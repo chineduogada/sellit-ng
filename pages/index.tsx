@@ -13,6 +13,14 @@ import Head from "next/head";
 import { getHotAds, HotAd } from "services/product";
 import { BsFillCaretRightFill } from "react-icons/bs";
 
+const getSectionStyle = () => ({
+  p: { base: 2, sm: 3, md: 4 },
+  m: { base: 2, sm: 3, md: 4 },
+  shadow: "lg",
+  rounded: "md",
+  bg: "#fff",
+});
+
 const Home: NextPage<{ ads: HotAd[] }> = ({ ads }) => {
   return (
     <>
@@ -25,8 +33,17 @@ const Home: NextPage<{ ads: HotAd[] }> = ({ ads }) => {
       <Box minHeight="100vh" bg="#f8f8f8">
         <h1>Sellit.ng</h1>
 
-        <Flex>
+        <Flex justifyContent="center">
           <CardsSection ads={ads} />
+
+          <Box
+            d={{ base: "none", lg: "block" }}
+            flex={1}
+            {...getSectionStyle()}
+            ml="0 !important"
+          >
+            Ad
+          </Box>
         </Flex>
       </Box>
     </>
@@ -34,16 +51,9 @@ const Home: NextPage<{ ads: HotAd[] }> = ({ ads }) => {
 };
 
 const CardsSection = ({ ads }: { ads: HotAd[] }) => (
-  <Box
-    as="section"
-    p={{ base: 3, sm: 3, md: 5 }}
-    m={{ base: 3, sm: 3, md: 5 }}
-    shadow="lg"
-    rounded="md"
-    bg="#fff"
-  >
+  <Box as="section" {...getSectionStyle()}>
     <Flex justifyContent="space-between" pb={5} alignItems={"center"}>
-      <Heading fontSize="lg">Sellit&apos;s Trending Adverts</Heading>
+      <Heading fontSize="lg">Sellit&apos;s Trending Ads</Heading>
 
       <Button size="sm" rightIcon={<BsFillCaretRightFill />}>
         See All
@@ -52,10 +62,11 @@ const CardsSection = ({ ads }: { ads: HotAd[] }) => (
 
     <Grid
       gridTemplateColumns={{
-        base: "repeat(2, 170px)",
+        base: "repeat(2, 160px)",
         sm: "repeat(3, 190px)",
         // md: "repeat(3, 190px)",
-        lg: "repeat(5, 190px)",
+        lg: "repeat(4, 190px)",
+        xl: "repeat(5, 190px)",
       }}
       gridGap={7}
     >
@@ -107,13 +118,19 @@ const BoxCard = ({ ad }: { ad: HotAd }) => {
           <Image
             src={ad.image}
             alt={ad.title}
-            w={{ base: "170px", sm: "190px" }}
+            w={{ base: "160px", sm: "190px" }}
             h="145px"
           />
 
-          <Text isTruncated size="md">
-            {ad.title}
-          </Text>
+          <Box d={{ base: "none", md: "block" }}>
+            <Text isTruncated size="md">
+              {ad.title}
+            </Text>
+          </Box>
+
+          <Box d={{ base: "block", md: "none" }}>
+            <Text size="md">{ad.title}</Text>
+          </Box>
         </Box>
       </Tooltip>
     </Box>
