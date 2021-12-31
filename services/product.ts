@@ -23,24 +23,36 @@ import { http } from "./http";
 //   },
 // });
 
-export interface Product {
-  name: string;
-  price: number;
-  description: string;
+// export interface Ad {
+//   _id: string;
+//   title: string;
+//   price: string;
+//   description: string;
+//   image: string;
+//   createdAt: string;
+//   imageCount: string;
+//   url: string;
+// }
+
+export interface HotAd {
+  _id: string;
+  title: string;
+  slug: string;
+  verifiedSeller: boolean;
   image: string;
-  createdAt: Date;
+  url: string;
 }
 
-export const getAllProducts = async (): Promise<{ products: Product[] }> => {
-  const path = `/products`;
+export const getHotAds = async (): Promise<{ ads: HotAd[] }> => {
+  const path = `/ads/hot`;
 
   const {
     data: { data },
   } = await http.get(path);
 
-  const products: Product[] = data;
+  const ads: HotAd[] = data;
 
   return {
-    products,
+    ads,
   };
 };

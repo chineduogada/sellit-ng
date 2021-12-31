@@ -1,8 +1,19 @@
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Text,
+  Tooltip,
+} from "@chakra-ui/react";
+import Image from "components/Image/Image";
 import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
-import { getAllProducts, Product } from "services/product";
+import { getHotAds, HotAd } from "services/product";
+import { BsFillCaretRightFill } from "react-icons/bs";
 
-const Home: NextPage<{ products: Product[] }> = ({ products }) => {
+const Home: NextPage<{ ads: HotAd[] }> = ({ ads }) => {
   return (
     <>
       <Head>
@@ -11,15 +22,106 @@ const Home: NextPage<{ products: Product[] }> = ({ products }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <h1>Sellit.ng</h1>
+      <Box minHeight="100vh" bg="#f8f8f8">
+        <h1>Sellit.ng</h1>
 
-      <pre>{JSON.stringify(products, null, 2)}</pre>
+        <Flex>
+          <CardsSection ads={ads} />
+        </Flex>
+      </Box>
     </>
   );
 };
 
+const CardsSection = ({ ads }: { ads: HotAd[] }) => (
+  <Box
+    as="section"
+    p={{ base: 3, sm: 3, md: 5 }}
+    m={{ base: 3, sm: 3, md: 5 }}
+    shadow="lg"
+    rounded="md"
+    bg="#fff"
+  >
+    <Flex justifyContent="space-between" pb={5} alignItems={"center"}>
+      <Heading fontSize="lg">Sellit&apos;s Trending Adverts</Heading>
+
+      <Button size="sm" rightIcon={<BsFillCaretRightFill />}>
+        See All
+      </Button>
+    </Flex>
+
+    <Grid
+      gridTemplateColumns={{
+        base: "repeat(2, 170px)",
+        sm: "repeat(3, 190px)",
+        // md: "repeat(3, 190px)",
+        lg: "repeat(5, 190px)",
+      }}
+      gridGap={7}
+    >
+      {ads.map((ad) => (
+        <BoxCard key={ad._id} ad={ad} />
+      ))}
+    </Grid>
+  </Box>
+);
+
+const BoxCard = ({ ad }: { ad: HotAd }) => {
+  return (
+    <Box
+      cursor="pointer"
+      sx={{
+        "&:hover p": ad.verifiedSeller
+          ? {
+              color: "green.500",
+            }
+          : {},
+        img: {
+          transition: "all 0.3s ease",
+        },
+        "&:hover img": {
+          transform: "scale(1.05)",
+        },
+      }}
+    >
+      <Tooltip
+        label={`${ad.title}${ad.verifiedSeller ? " (Verified Seller)" : ""}`}
+        placement="top"
+      >
+        <Box position="relative">
+          {ad.verifiedSeller && (
+            <Image
+              src={
+                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABQCAMAAACNtsODAAABJlBMVEUAAAAcz58v5bUc0J4d0J8c0Z8g06In2Kkd0J8c0J8c0J8d0J8d0Z8h1aUc0J8c0J8d0J8dz58d0J8e0qAc0J8d0J8e0qEf0aIf0KEh0aId0J8dz58ez6Acz57////4+fvo9vWV59Hp+vWM5M1M2bMk0aIh0KCO5c70+fpV2rYq0qTc9PCm6tmh6dZD16+L5M3x+Pnq9vWd6dWa59OT5dB/48gs0qXm9/TY8+657eHu+/jW8uzD8OWu7Nxz4cNJ17I/1q74/fzl9fPg9PF34cVR2rXN8ejH8ue/7uS27+Cy7N5i3rw01KiG5cuD5Mpw38L8/v30/Prs9/bS8ut64sZq379e3bpa3Lg71quq69pO2bQy06fv9/fX9+7M8+n2+frw+/ik69iO4LSTAAAAHXRSTlMA/AXvfWkuDfrj2cteHNGth3JTSL64QzkxJuXBm/6Bgi0AAANuSURBVFjD7dZnV9pQHAbwuEdttdrdPrmASdhhhAy2IghliAIKzrbf/0v0apKWSEybpKenw+fADS/gd3L/kCcw+EV5hB4h5yjlsvILIEEusGxBFnxCSi/E3kXtKZ6h2IVcOma/5bgkN2IeoM/7rE32C64h9oH8K9DJR5q7Yd3QF9feITUK4PYH8IUeuc8+thbSoSw9NE5Y31CQrlHq+IXCdBnvs76hCn2eUcc3RNPRHd/Q6THrHQqZkNUJuYaa32c05bBN11DPhOrsdHquIWVfh2RrjSiuIQTvoCPWkiDcQ8I1O5NrwQMEsXDfKYjeyp87sTonHLxB4ELTToiDVwjdm+/OTdfXDbJeMMZT93un5evNQqFZ5/+kPxH/AjTWxqDpaZYrcxgGn4j3xUEV0ynKD0P8VQI0WgvTqXZRj0wEIWq9ztJhh62dDwT6QdIHwvFakke4faQqpVQ9QIqnosah284UKwCfrJU4R2hMzoBcOkaf0m6mjGRAk/iDLJf/NBI5EhW0uFwmHSRJq1eMOEGCmgDiZfBpCTgil0kyAQ6ySEUACnVIAzgs8ZE20CdOEKSBUCUd7JFWIpEnjeQBpqEUSSQSRVUkdaDrDHHkLBcQ6JjOd2n2knELlIvs0qSq5BSIOUPQzuPJ23ft0iXK34MqRAT2OIXQt3R+AKU+3c4B5VqFazVxD4oFStGzgIx2OtzXIs7QhMRBo7Qj6bx4H8JFkdSyAi5LRD1VZyD78Pa9ETMOf9tF+x9AojQc5EcCjBwd0ocX6PIqfzHpRyQYCQbowwu0R0a3q2i0kgGZZXQo5/O20CpmMrySqgJgtJIBmWWUqbUqNs4C88RmRoeEBHK82Uo6ZJQRMvbjesnszMFmd6MhCZutpENGGSETtHPmdhhmYxV2acbNVtIho4yQyWE2q0sMzfIzWNJXq3TNq2Yr6ZBRRrbQszfMXeYXLdubDLTRWCJZs5V0yCgjG2hua54x88ZyUo0hIWmJN1rJgIwymoXWX+uGeVKWScW6dq0Us5vy1gpjzdsX8JAny8xsNhbcMgtLjG1WPsy5cjafMg9l+YWLXb1mnLK9/nPMuw3mB5lfWvuJ4SyuOCsm5Z8xKYcNrlHGRV5t2n+D77fnGZd5+nymqta3lt0qprW59m0wLxdNxSP2anvp+cbOW+Z35SsNX4dTiEr+bwAAAABJRU5ErkJggg=="
+              }
+              alt={"Verified seller"}
+              w={{ base: "40px", sm: "47px" }}
+              h="45px"
+              position="absolute"
+              zIndex={100}
+              top="0"
+              right="0"
+            />
+          )}
+
+          <Image
+            src={ad.image}
+            alt={ad.title}
+            w={{ base: "170px", sm: "190px" }}
+            h="145px"
+          />
+
+          <Text isTruncated size="md">
+            {ad.title}
+          </Text>
+        </Box>
+      </Tooltip>
+    </Box>
+  );
+};
+
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { products }: { products: Product[] } = await getAllProducts();
+  const { ads }: { ads: HotAd[] } = await getHotAds();
 
   // if (!products) {
   //   return {
@@ -29,7 +131,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      products,
+      ads,
     },
   };
 };

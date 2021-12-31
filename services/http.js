@@ -8,8 +8,8 @@ import axios from "axios";
 //   return Promise.reject(error);
 // });
 
-export const baseURL = "https://sellit-ng.herokuapp.com/api/v1";
-// export const baseURL = "http://127.0.0.1/api/v1";
+// export const baseURL = "https://sellit-ng.herokuapp.com/api/v1";
+export const baseURL = "http://127.0.0.1:8080/api/v1";
 
 const defaultOptions = (explicitToken) => ({
   // timeout's the request in 10 minute by default
