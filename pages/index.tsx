@@ -1,7 +1,8 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import Head from "next/head";
+import { getAllProducts, Product } from "services/product";
 
-const Home: NextPage = () => {
+const Home: NextPage<{ products: Product[] }> = ({ products }) => {
   return (
     <>
       <Head>
@@ -11,8 +12,25 @@ const Home: NextPage = () => {
       </Head>
 
       <h1>Sellit.ng</h1>
+
+      <pre>{JSON.stringify(products, null, 2)}</pre>
     </>
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { products }: { products: Product[] } = await getAllProducts();
+
+  // if (!products) {
+  //   return {
+  //     notFound: true,
+  //   };
+  // }
+
+  return {
+    props: {
+      products,
+    },
+  };
+};
 export default Home;
